@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import { observer } from "mobx-react";
 import { Modal, Form, Button, Input } from "antd";
 import { RootContext } from "../rootContext";
-import { v4 as uuidv4 } from "uuid";
 
 type User = { userName: string; password: string };
 

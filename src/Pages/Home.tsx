@@ -33,12 +33,6 @@ const STATUSES: { title: string; value: number }[] = [
   },
 ];
 
-let lastIndex = 0;
-const updateIndex = () => {
-  lastIndex++;
-  return lastIndex;
-};
-
 export const HomePage = observer(() => {
   const { taskStore, userStore } = useContext(RootContext);
   const { isLogin } = userStore;

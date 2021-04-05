@@ -8,19 +8,15 @@ import {
 import { apiClient } from "../../API/APIClient";
 import { RootStore } from "../";
 
-enum Status {
-  done = 10,
-}
-
-const isTaskFormValue = (value: any): value is TaskFormValue =>
-  value.username !== undefined &&
-  value.username !== "" &&
-  value.email !== undefined &&
-  value.email !== "" &&
-  value.text !== undefined &&
-  value.text !== "" &&
-  value.status !== undefined &&
-  value.status !== "";
+// const isTaskFormValue = (value: any): value is TaskFormValue =>
+//   value.username !== undefined &&
+//   value.username !== "" &&
+//   value.email !== undefined &&
+//   value.email !== "" &&
+//   value.text !== undefined &&
+//   value.text !== "" &&
+//   value.status !== undefined &&
+//   value.status !== "";
 
 export class TaskStore {
   private _store: RootStore;
@@ -82,10 +78,6 @@ export class TaskStore {
     if (findTask === undefined) {
       return;
     }
-
-    const oldStatus = "" + findTask.status;
-
-    const isChangeText = findTask.text !== text;
 
     await apiClient.edit({ id, text, status }, this._store.userStore.token);
     this.editTask = null;
