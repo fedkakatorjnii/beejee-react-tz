@@ -113,7 +113,7 @@ module.exports = (env = {}, argv = {}) => {
         "process.env.API_URL": JSON.stringify("http://127.0.0.1:8000/api/"),
       }),
       new HtmlWebpackPlugin({
-        title: "react-redux-saga",
+        title: "beejee-react-tz",
         template: "./index.html",
       }),
       new CleanWebpackPlugin({
