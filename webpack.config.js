@@ -40,7 +40,7 @@ module.exports = (env = {}, argv = {}) => {
     output: {
       filename: "[name].js",
       path: BUILD_DIR,
-      publicPath: BUILD_DIR,
+      publicPath: "/",
     },
     module: {
       rules: [

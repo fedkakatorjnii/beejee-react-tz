@@ -10,7 +10,8 @@
     "build:ts": "tsc || true",
     "watch:ts": "tsc -w",
     "test": "jest --watch --maxWorkers=1",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "server": "node server.js"
   },
   "dependencies": {
     "@types/react": "^17.0.0",
@@ -19,6 +20,7 @@
     "@types/uuid": "^8.3.0",
     "antd": "^4.14.1",
     "axios": "^0.21.1",
+    "express": "^4.17.1",
     "mobx": "^6.1.8",
     "mobx-react": "^7.1.0",
     "react": "^17.0.1",
