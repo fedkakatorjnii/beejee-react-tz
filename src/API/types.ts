@@ -53,14 +53,7 @@ type EditError = {
   token?: string;
 };
 
-// interface EditResponseError {
-//   status: ResponseStatus.ERROR;
-//   message: {
-//     token: string;
-//   };
-// }
-
-//
+// login
 
 type LoginError = {
   username?: string;
@@ -96,3 +89,5 @@ export type TaskErrors = {
 export type UserErrors = {
   login: LoginError | null;
 };
+
+export type User = { userName: string; password: string };

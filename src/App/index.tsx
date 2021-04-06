@@ -1,6 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  useHistory,
+} from "react-router-dom";
 import { HomePage, LoginPage } from "../Pages";
 import { observer } from "mobx-react";
 import { Layout, Button } from "antd";
@@ -10,42 +15,58 @@ import { rootStore } from "../stores";
 import { RootProvider, RootContext } from "../rootContext";
 
 const App = observer(() => {
-  const { userStore } = useContext(RootContext);
+  const { userStore, taskStore } = useContext(RootContext);
   const { isLogin } = userStore;
+  const { errors } = taskStore;
+  const history = useHistory();
+
+  useEffect(() => {
+    if (!errors.edit || !errors.edit.token) {
+      return;
+    }
+
+    userStore.logoutAPI();
+    history.push("/login");
+  }, [errors.edit?.token]);
 
   return (
-    <Router>
-      <Layout>
-        <Header
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
+    <Layout>
+      <Header
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div className="logo" />
+        <Button
+          type="primary"
+          onClick={() => {
+            isLogin ? userStore.logoutAPI() : history.push("/login");
           }}
         >
-          <div className="logo" />
-          <Button type="primary" href="/login">
-            {isLogin ? "sign out" : "sign in"}
-          </Button>
-        </Header>
-        <Content>
-          <Switch>
-            <Route key="login" path="/login/">
-              <LoginPage key="login" />
-            </Route>
-            <Route key="home" path="/">
-              <HomePage key="home" />
-            </Route>
-          </Switch>
-        </Content>
-      </Layout>
-    </Router>
+          {isLogin ? "sign out" : "sign in"}
+        </Button>
+      </Header>
+      <Content>
+        <Switch>
+          <Route key="login" path="/login/">
+            <LoginPage key="login" />
+          </Route>
+          <Route key="home" path="/">
+            <HomePage key="home" />
+          </Route>
+        </Switch>
+      </Content>
+    </Layout>
   );
 });
 
 ReactDOM.render(
   <RootProvider store={rootStore}>
-    <App />
+    <Router>
+      <App />
+    </Router>
   </RootProvider>,
   document.getElementById("root")
 );

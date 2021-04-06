@@ -103,7 +103,6 @@ export const FormDialog = observer(
             />
           </Form.Item>
 
-          {/* Radio */}
           {!!editTask?.id && (
             <Form.Item
               help={error?.status}
@@ -126,13 +125,7 @@ export const FormDialog = observer(
                 }
               >
                 <Radio value={0}>задача не выполнена</Radio>
-                <Radio value={1}>
-                  задача не выполнена, отредактирована админом
-                </Radio>
                 <Radio value={10}>задача выполнена</Radio>
-                <Radio value={11}>
-                  задача отредактирована админом и выполнена
-                </Radio>
               </Radio.Group>
             </Form.Item>
           )}

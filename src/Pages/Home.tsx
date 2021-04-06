@@ -28,7 +28,7 @@ const STATUSES: { title: string; value: number }[] = [
     title: "задача выполнена",
   },
   {
-    value: 1,
+    value: 11,
     title: "задача отредактирована админом и выполнена",
   },
 ];
@@ -125,7 +125,11 @@ export const HomePage = observer(() => {
           <Button
             disabled={!isLogin}
             onClick={() => {
-              isLogin && taskStore.setEditTask(task);
+              isLogin &&
+                taskStore.setEditTask({
+                  ...task,
+                  status: Math.trunc(task.status / 10) * 10,
+                });
             }}
           >
             <EditOutlined />

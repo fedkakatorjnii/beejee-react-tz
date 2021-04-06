@@ -3,14 +3,7 @@ import { useHistory } from "react-router-dom";
 import { observer } from "mobx-react";
 import { Modal, Form, Button, Input } from "antd";
 import { RootContext } from "../rootContext";
-
-type User = { userName: string; password: string };
-
-const isUserFormValue = (value: any): value is User =>
-  value.userName !== undefined &&
-  value.userName !== "" &&
-  value.password !== undefined &&
-  value.password !== "";
+import { isUserFormValue } from "../utils";
 
 export const LoginPage = observer(() => {
   const history = useHistory();
@@ -25,10 +18,6 @@ export const LoginPage = observer(() => {
 
     isLogin && history.push("/");
   }, [isLogin]);
-
-  useEffect(() => {
-    console.log("userName", userName);
-  }, [userName]);
 
   return (
     <Modal

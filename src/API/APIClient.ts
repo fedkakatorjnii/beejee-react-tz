@@ -79,14 +79,13 @@ class APIClient {
     const newData = new FormData();
     const { id, text, status } = data;
 
-    console.log("edit", status);
-
-    text && newData.append("text", text);
-    status && newData.append("status", "" + status);
+    text !== undefined && newData.append("text", text);
+    status !== undefined && newData.append("status", "" + status);
     !!token && newData.append("token", token);
 
     return axios.post<EditResponse>(`${this._url}edit/${id}/`, newData, {
       params,
+      headers: {},
     });
   }
 }

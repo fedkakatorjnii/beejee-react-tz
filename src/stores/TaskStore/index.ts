@@ -1,4 +1,4 @@
-import { makeAutoObservable, observable, action } from "mobx";
+import { makeAutoObservable } from "mobx";
 import {
   Task,
   TaskFormValue,
@@ -7,16 +7,7 @@ import {
 } from "../../API/types";
 import { apiClient } from "../../API/APIClient";
 import { RootStore } from "../";
-
-// const isTaskFormValue = (value: any): value is TaskFormValue =>
-//   value.username !== undefined &&
-//   value.username !== "" &&
-//   value.email !== undefined &&
-//   value.email !== "" &&
-//   value.text !== undefined &&
-//   value.text !== "" &&
-//   value.status !== undefined &&
-//   value.status !== "";
+import { isEditTask } from "../../utils";
 
 export class TaskStore {
   private _store: RootStore;
@@ -28,15 +19,15 @@ export class TaskStore {
     this._store = store;
   }
 
-  @observable tasks: Task[] = [];
-  @observable total_task_count: number = 0;
-  @observable loading: boolean = false;
-  @observable error: Error | null = null;
-  @observable errors: TaskErrors = {
+  tasks: Task[] = [];
+  total_task_count: number = 0;
+  loading: boolean = false;
+  error: Error | null = null;
+  errors: TaskErrors = {
     list: null,
     edit: null,
   };
-  @observable editTask: Partial<TaskFormValue> | null = null;
+  editTask: Partial<TaskFormValue> | null = null;
 
   private _pagination: PaginationValue = {};
 
@@ -71,19 +62,31 @@ export class TaskStore {
     this.editTask = null;
   };
 
-  private _fetchEditTask = async (task: Partial<TaskFormValue>) => {
+  private _fetchEditTask = async (
+    task: Pick<TaskFormValue, "id" | "text" | "status">
+  ) => {
     const { id, text, status } = task;
     const findTask = this.tasks.find((task) => task.id === id);
 
     if (findTask === undefined) {
       return;
     }
+    let newStatus = status;
 
-    await apiClient.edit({ id, text, status }, this._store.userStore.token);
+    if (
+      findTask.status === 1 ||
+      findTask.status === 11 ||
+      findTask.text !== text
+    ) {
+      newStatus += 1;
+    }
+
+    const token = this._store.userStore.getToken();
+
+    await apiClient.edit({ id, text, status: newStatus }, token);
     this.editTask = null;
   };
 
-  @action
   storeTask = async () => {
     if (this.editTask === null) {
       return;
@@ -96,7 +99,7 @@ export class TaskStore {
     try {
       if (id === undefined) {
         await this._fetchCreateTask(this.editTask);
-      } else {
+      } else if (isEditTask(this.editTask)) {
         await this._fetchEditTask(this.editTask);
       }
       await this._fetchTasks();
@@ -107,13 +110,11 @@ export class TaskStore {
     this.loading = false;
   };
 
-  @action
   changePagination(pagination: PaginationValue) {
     this._pagination = pagination;
     this._fetchTasks();
   }
 
-  @action
   changeEditTask = <T extends TaskFormValue, K extends keyof TaskFormValue>(
     key: K,
     value: T[K] | undefined
@@ -124,7 +125,6 @@ export class TaskStore {
     };
   };
 
-  @action
   setEditTask = (value: Partial<TaskFormValue> | null) => {
     this.editTask = value;
   };

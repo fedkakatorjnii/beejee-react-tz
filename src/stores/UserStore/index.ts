@@ -1,28 +1,36 @@
-import { makeAutoObservable, observable, action, computed } from "mobx";
+import { makeAutoObservable } from "mobx";
 import { apiClient } from "../../API/APIClient";
-import { UserErrors } from "../../API/types";
-import { User } from "./types";
+import { User, UserErrors } from "../../API/types";
 
 export class UserStore {
   constructor() {
     makeAutoObservable(this);
+
+    const token = localStorage.getItem("token");
+    this.token = token;
   }
 
   userName: string | null = null;
-  @observable password: string | null = null;
-  @observable token: string | null = null;
-  @observable loading: boolean = false;
-  @observable errors: UserErrors = {
+  password: string | null = null;
+  token: string | null = null;
+  loading: boolean = false;
+  errors: UserErrors = {
     login: null,
   };
 
-  @action
+  getToken = () => {
+    const token = localStorage.getItem("token");
+
+    return token;
+  };
+
   loginAPI = async () => {
     this.errors.login = null;
     this.loading = true;
     try {
       const res = await apiClient.login(this.userName, this.password);
 
+      localStorage.setItem("token", res.data.message.token);
       this.token = res.data.message.token;
     } catch (err) {
       this.errors.login = err;
@@ -31,6 +39,7 @@ export class UserStore {
   };
 
   logoutAPI = () => {
+    localStorage.removeItem("token");
     this.token = null;
   };
 
@@ -42,13 +51,8 @@ export class UserStore {
     this.password = value === undefined || value.length === 0 ? null : value;
   };
 
-  setUser = <T extends User, K extends keyof User>(
-    key: K,
-    value: T[K] | undefined
-  ) => {};
-
-  @computed get isLogin() {
-    if (typeof this.token === "string" && typeof this.userName === "string") {
+  get isLogin() {
+    if (typeof this.token === "string") {
       return true;
     }
 
